@@ -33,12 +33,18 @@ set(QT_MINIMUM_VERSION "6.10.0")
 
 find_package(Qt6Widgets "${QT_MINIMUM_VERSION}" REQUIRED)
 find_package(Qt6LinguistTools "${QT_MINIMUM_VERSION}" REQUIRED)
-find_package(Qt6GuiPrivate REQUIRED)
+if(APPLE)
+    # macOS: Qt private headers and XCB are only needed by the X11-only
+    # XdndWorkaround, which is not built on non-X11 platforms.
+    message(STATUS "Building on macOS: XCB and XDND workaround are disabled")
+else()
+    find_package(Qt6GuiPrivate REQUIRED)
+    find_package(XCB REQUIRED)
+endif()
 find_package(lxqt2-build-tools "${LXQTBT_MINIMUM_VERSION}" REQUIRED)
 find_package(GLIB "${GLIB_MINIMUM_VERSION}" REQUIRED COMPONENTS gio gio-unix gobject gthread)
 find_package(lxqt-menu-data "${LXQTMENUDATA_MINIMUM_VERSION}" REQUIRED)
 find_package(Exif REQUIRED)
-find_package(XCB REQUIRED)
 
 message(STATUS "Building ${PROJECT_NAME} with Qt ${Qt6Core_VERSION}")
 

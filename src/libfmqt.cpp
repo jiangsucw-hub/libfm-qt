@@ -21,7 +21,9 @@
 #include <QLocale>
 #include <QPixmapCache>
 #include "core/thumbnailer.h"
+#ifndef Q_OS_MACOS
 #include "xdndworkaround.h"
+#endif
 #include "core/vfs/fm-file.h"
 #include "core/legacy/fm-config.h"
 
@@ -32,7 +34,9 @@ struct LibFmQtData {
     ~LibFmQtData();
 
     QTranslator translator;
+#ifndef Q_OS_MACOS
     XdndWorkaround workaround;
+#endif
     int refCount;
     Q_DISABLE_COPY(LibFmQtData)
 };

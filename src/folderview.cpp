@@ -46,8 +46,10 @@
 #include <QTextEdit>
 #include <QWidgetAction> // for detailed list header context menu
 #include <QLabel> // for detailed list header context menu
+#ifndef Q_OS_MACOS
 #include <xcb/xcb.h> // for XDS support
 #include "xdndworkaround.h" // for XDS support
+#endif
 #include "folderview_p.h"
 
 #include <cmath>
@@ -1574,6 +1576,7 @@ void FolderView::childDropEvent(QDropEvent* e) {
     // NOTE: in theory, it's not possible to implement XDS with pure Qt.
     // We achieved this with some dirty XCB/XDND workarounds.
     // Please refer to XdndWorkaround::clientMessage() in xdndworkaround.cpp for details.
+#ifndef Q_OS_MACOS
     if(QGuiApplication::platformName() == QStringLiteral("xcb") && e->mimeData()->hasFormat(QStringLiteral("XdndDirectSave0"))) {
         e->setDropAction(Qt::CopyAction);
         const QWidget* targetWidget = childView()->viewport();
@@ -1612,6 +1615,7 @@ void FolderView::childDropEvent(QDropEvent* e) {
         e->accept(); // yeah! we've done with XDS so stop Qt from further event propagation.
         return;
     }
+#endif
 
     if(e->modifiers() == Qt::NoModifier) {
         // If no key modifiers are used, pop up a menu

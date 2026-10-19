@@ -99,9 +99,14 @@ set(libfm_SRCS
     filesearchdialog.cpp
     filedialog.cpp
     fm-search.c # might be moved to libfm later
-    xdndworkaround.cpp
     filedialoghelper.cpp
 )
+
+# XdndWorkaround is X11-only (it includes <xcb/xcb.h> and Qt's private
+# qdnd_p.h header), so it is compiled only on platforms that have XCB.
+if(NOT APPLE)
+    list(APPEND libfm_SRCS xdndworkaround.cpp)
+endif()
 
 set(libfm_UIS
     file-props.ui
@@ -137,9 +142,14 @@ install(EXPORT
     COMPONENT Devel
 )
 
+set(_libfm_qt_extra_link_libraries)
+if(TARGET Qt6::GuiPrivate)
+    list(APPEND _libfm_qt_extra_link_libraries Qt6::GuiPrivate)
+endif()
+
 target_link_libraries(${LIBFM_QT_LIBRARY_NAME}
     PRIVATE
-        Qt6::GuiPrivate
+        ${_libfm_qt_extra_link_libraries}
     PUBLIC
         Qt6::Widgets
         ${GLIB_LIBRARIES}
@@ -156,14 +166,19 @@ set_target_properties(${LIBFM_QT_LIBRARY_NAME} PROPERTIES
     SOVERSION ${LIBFM_QT_SOVERSION}
 )
 
+set(_libfm_qt_private_include_dirs)
+if(Qt6Gui_PRIVATE_INCLUDE_DIRS)
+    list(APPEND _libfm_qt_private_include_dirs ${Qt6Gui_PRIVATE_INCLUDE_DIRS})
+endif()
+
 target_include_directories(${LIBFM_QT_LIBRARY_NAME}
-    PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}"
+    PRIVATE ${_libfm_qt_private_include_dirs}
         core/legacy
     PUBLIC
-        "${GLIB_INCLUDE_DIRS}"
-        "${GLIB_GIO_UNIX_INCLUDE_DIR}"
-        "${XCB_INCLUDE_DIRS}"
-        "${EXIF_INCLUDE_DIRS}"
+        ${GLIB_INCLUDE_DIRS}
+        ${GLIB_GIO_UNIX_INCLUDE_DIR}
+        ${XCB_INCLUDE_DIRS}
+        ${EXIF_INCLUDE_DIRS}
     INTERFACE
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
         "$<BUILD_INTERFACE:${LIBFM_QT_INTREE_INCLUDE_DIR}>"
