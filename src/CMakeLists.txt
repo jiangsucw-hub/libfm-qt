@@ -136,6 +136,17 @@ add_library(${LIBFM_QT_LIBRARY_NAME} SHARED
     ${QM_FILES}
 )
 
+if(APPLE)
+    # GLib does not ship gio/gdesktopappinfo.h on Darwin; provide a minimal
+    # shim so that the freedesktop.org desktop-entry code paths still build.
+    target_sources(${LIBFM_QT_LIBRARY_NAME} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/../macos-compat/gdesktopappinfo-compat.c
+    )
+    target_include_directories(${LIBFM_QT_LIBRARY_NAME} BEFORE PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/../macos-compat
+    )
+endif()
+
 install(EXPORT
     "${LIBFM_QT_LIBRARY_NAME}-targets"
     DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${LIBFM_QT_LIBRARY_NAME}"
