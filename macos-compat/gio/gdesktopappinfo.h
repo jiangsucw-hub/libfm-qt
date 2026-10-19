@@ -27,7 +27,7 @@ GDesktopAppInfo* g_desktop_app_info_new_from_keyfile  (GKeyFile   *key_file);
 char*            g_desktop_app_info_get_filename (GDesktopAppInfo *info);
 gboolean         g_desktop_app_info_get_nodisplay (GDesktopAppInfo *info);
 gboolean         g_desktop_app_info_get_is_hidden (GDesktopAppInfo *info);
-const char* const* g_desktop_app_info_get_categories (GDesktopAppInfo *info);
+const char*      g_desktop_app_info_get_categories (GDesktopAppInfo *info);
 
 G_END_DECLS
 

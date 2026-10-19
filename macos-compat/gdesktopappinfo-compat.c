@@ -132,7 +132,7 @@ g_desktop_app_info_get_is_hidden(GDesktopAppInfo* info)
     return FALSE;
 }
 
-const char* const*
+const char*
 g_desktop_app_info_get_categories(GDesktopAppInfo* info)
 {
     (void)info;
