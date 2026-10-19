@@ -18,6 +18,7 @@
  */
 
 #include "libfmqt.h"
+#include <QCoreApplication>
 #include <QLocale>
 #include <QPixmapCache>
 #include "core/thumbnailer.h"
@@ -65,7 +66,14 @@ LibFmQtData::LibFmQtData(): refCount(1) {
     // turn on glib debug message
     // g_setenv("G_MESSAGES_DEBUG", "all", true);
     Fm::Thumbnailer::loadAll();
-    (void)translator.load(QStringLiteral("libfm-qt_") + QLocale::system().name(), QStringLiteral(LIBFM_QT_DATA_DIR) + QStringLiteral("/translations"));
+#ifdef Q_OS_MACOS
+    // Inside a macOS app bundle the data lives in Contents/Resources.
+    const QString translationsDir = QCoreApplication::applicationDirPath()
+                                    + QStringLiteral("/../Resources/share/libfm-qt/translations");
+#else
+    const QString translationsDir = QStringLiteral(LIBFM_QT_DATA_DIR) + QStringLiteral("/translations");
+#endif
+    (void)translator.load(QStringLiteral("libfm-qt_") + QLocale::system().name(), translationsDir);
 
     // FIXME: we keep the FmConfig data structure here to keep compatibility with legacy libfm API.
     fm_config_init();
