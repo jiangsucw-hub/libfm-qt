@@ -20,7 +20,9 @@
 
 #include "applaunchcontext.h"
 #include <QApplication>
+#ifndef Q_OS_MACOS
 #include <X11/Xlib.h>
+#endif
 
 typedef struct _FmAppLaunchContext {
   GAppLaunchContext parent;
@@ -29,6 +31,7 @@ typedef struct _FmAppLaunchContext {
 G_DEFINE_TYPE(FmAppLaunchContext, fm_app_launch_context, G_TYPE_APP_LAUNCH_CONTEXT)
 
 static char* fm_app_launch_context_get_display(GAppLaunchContext * /*context*/, GAppInfo * /*info*/, GList * /*files*/) {
+#ifndef Q_OS_MACOS
   if(auto x11NativeInterface = qApp->nativeInterface<QNativeInterface::QX11Application>()) {
     Display* dpy = x11NativeInterface->display();
     if(dpy) {
@@ -36,6 +39,7 @@ static char* fm_app_launch_context_get_display(GAppLaunchContext * /*context*/, 
       return g_strdup(xstr);
     }
   }
+#endif
   return nullptr;
 }
 

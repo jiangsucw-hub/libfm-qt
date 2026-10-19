@@ -20,7 +20,9 @@
 
 #include "fontbutton.h"
 #include <QFontDialog>
+#ifndef Q_OS_MACOS
 #include <X11/X.h>
+#endif
 
 namespace Fm {
 
